@@ -11,8 +11,54 @@
     <title>Weather Forecast by Precious</title>
 </head>
 
-<body>
+<body class="box-border bg-custom-bg text-white">
+    <header class="bg-custom-bg">
+        <h1 class="text-center font-bold text-xl p-4 md:text-4xl md:p-16 bg-opacity-20 bg-black mb-2 rounded-b-2xl">
+            Weather Forecast Application</h1>
+    </header>
+    <main>
+        <section class="flex flex-col md:flex-row flex-wrap">
+            <section class="searchArea flex flex-col m-2 space-y-4 md:w-2/6 bg-black bg-opacity-20 rounded-2xl p-4">
+                <h2 class="text-center md:text-start">Enter a City Name</h2>
+                <input type="text" class="p-2 rounded-lg" placeholder="Example: Lucknow, Delhi, Agra">
+                <button type="submit"
+                    class="hover:bg-accent transition-all duration-300 p-2 text-white rounded-lg font-bold bg-darkAccent">Check
+                    Weather</button>
 
+                <div class="inline-flex relative items-center justify-center w-full">
+                    <hr class="w-64 h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
+                    <span
+                        class="absolute px-3 font-medium text-darkAccent -translate-x-1/2 bg-white left-1/2 dark:text-darkAccent dark:bg-gray-900">or</span>
+                </div>
+                <button class="hover:bg-darkAccent rounded-lg p-2 text-white font-bold bg-accent">Use Current
+                    Location</button>
+            </section>
+
+            <section class="overview p-2 flex-grow md:w-3/5 m-2 rounded-2xl bg-black bg-opacity-20 ">
+                <h3 class=" text-2xl text-white">Overview </h3>
+                <div class=" flex flex-row">
+                    <div class="font-semibold">
+                        <p class="p-4">Location:</p>
+                        <p class="p-4">Temperature:</p>
+                        <p class="p-4">Wind:</p>
+                        <p class="p-4">Humidity</p>
+                    </div>
+                    <div class="weatherIcon"></div>
+
+                </div>
+            </section>
+
+            <section class="forecast">5 Days Weather Forecast
+                <!-- component -->
+                <!-- This is an example component -->
+
+            </section>
+        </section>
+
+    </main>
+
+
+    <script src="./script.js"></script>
 </body>
 
 </html>
