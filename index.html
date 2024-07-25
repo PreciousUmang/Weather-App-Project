@@ -2,49 +2,86 @@
 <html lang="en">
 
 <head>
+    <!-- META TAGS -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Free Weather Site, Know Weather Forecast of your area in just 2 clicks">
     <meta name="keywords" content="HTML, CSS, JavaScript, tailwindCSS, Weather App, Forecast App, Free Web Apps">
     <meta name="author" content="Precious Umang">
+
+    <!-- GOOGLE FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Quicksand:wght@300..700&display=swap"
+        rel="stylesheet">
+
+    <!-- FONT AWESOME EMBEDDED HERE -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- STYLESHEET AND FAVICON -->
     <link rel="stylesheet" href="./src/output.css">
+    <link rel="icon" href="./images/favIcon.png" type="image/x-icon">
     <title>Weather Forecast by Precious</title>
 </head>
 
-<body class="box-border bg-custom-bg text-white">
+<body class="box-border bg-custom-bg text-white font-quickSand">
     <header class="bg-custom-bg">
         <h1 class="text-center font-bold text-xl p-4 md:text-4xl md:p-16 bg-opacity-20 bg-black mb-2 rounded-b-2xl">
             Weather Forecast Application</h1>
     </header>
     <main>
         <section class="flex flex-col md:flex-row flex-wrap">
-            <section class="searchArea flex flex-col m-2 space-y-4 md:w-2/6 bg-black bg-opacity-20 rounded-2xl p-4">
+            <section
+                class="searchArea flex flex-col md:m-2 space-y-4 font-semibold md:text-lg w-full md:w-2/6 bg-black bg-opacity-20 rounded-2xl p-4">
                 <h2 class="text-center md:text-start">Enter a City Name</h2>
-                <input type="text" class="p-2 rounded-lg" placeholder="Example: Lucknow, Delhi, Agra">
+                <input type="text" id="searchBox" class="p-4 text-gray-700 rounded-lg"
+                    placeholder="Example: Lucknow, Delhi, Agra" required>
                 <button type="submit"
-                    class="hover:bg-accent transition-all duration-300 p-2 text-white rounded-lg font-bold bg-darkAccent">Check
+                    class="hover:bg-accent transition-all searchBtn duration-300 p-2 text-white rounded-lg font-bold bg-darkAccent">Check
                     Weather</button>
 
                 <div class="inline-flex relative items-center justify-center w-full">
                     <hr class="w-64 h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
                     <span
-                        class="absolute px-3 font-medium text-darkAccent -translate-x-1/2 bg-white left-1/2 dark:text-darkAccent dark:bg-gray-900">or</span>
+                        class="absolute px-3 font-medium text-darkAccent -translate-x-1/2 bg-white left-1/2 dark:text-darkAccent dark:bg-gray-900 rounded-full italic">or</span>
                 </div>
                 <button class="hover:bg-darkAccent rounded-lg p-2 text-white font-bold bg-accent">Use Current
                     Location</button>
             </section>
 
-            <section class="overview p-2 flex-grow md:w-3/5 m-2 rounded-2xl bg-black bg-opacity-20 ">
-                <h3 class=" text-2xl text-white">Overview </h3>
-                <div class=" flex flex-row">
-                    <div class="font-semibold">
-                        <p class="p-4">Location:</p>
-                        <p class="p-4">Temperature:</p>
-                        <p class="p-4">Wind:</p>
-                        <p class="p-4">Humidity</p>
+            <section class="overview p-2 md:w-3/5 my-2 w-full md:m-2 rounded-2xl bg-black bg-opacity-20">
+                <h3 class="text-2xl text-white font-semibold">Overview</h3>
+                <div class="flex flex-row p-2  justify-center items-center">
+                    <div class="flex flex-col justify-evenly">
+                        <div class="flex flex-row p-2 Items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                class="pr-2 w-8 md:pr-4 md:w-12">
+                                <path fill="#ffffff"
+                                    d="M416 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm0 128A96 96 0 1 0 416 0a96 96 0 1 0 0 192zM96 112c0-26.5 21.5-48 48-48s48 21.5 48 48l0 164.5c0 17.3 7.1 31.9 15.3 42.5C217.8 332.6 224 349.5 224 368c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-18.5 6.2-35.4 16.7-48.9C88.9 308.4 96 293.8 96 276.5L96 112zM144 0C82.1 0 32 50.2 32 112l0 164.4c0 .1-.1 .3-.2 .6c-.2 .6-.8 1.6-1.7 2.8C11.2 304.2 0 334.8 0 368c0 79.5 64.5 144 144 144s144-64.5 144-144c0-33.2-11.2-63.8-30.1-88.1c-.9-1.2-1.5-2.2-1.7-2.8c-.1-.3-.2-.5-.2-.6L256 112C256 50.2 205.9 0 144 0zm0 416c26.5 0 48-21.5 48-48c0-20.9-13.4-38.7-32-45.3L160 112c0-8.8-7.2-16-16-16s-16 7.2-16 16l0 210.7c-18.6 6.6-32 24.4-32 45.3c0 26.5 21.5 48 48 48z" />
+                            </svg>
+                            <div class="md:pl-4 temperature text:xl md:text-4xl md:border-l-4 border-white"></div>
+                        </div>
+                        <div class="flex p-2 flex-row items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="pr-2 w-8 md:pr-4 md:w-12"
+                                viewBox="0 0 512 512">
+                                <path fill="#ffffff"
+                                    d="M288 32c0 17.7 14.3 32 32 32l32 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128c-17.7 0-32 14.3-32 32s14.3 32 32 32l320 0c53 0 96-43 96-96s-43-96-96-96L320 0c-17.7 0-32 14.3-32 32zm64 352c0 17.7 14.3 32 32 32l32 0c53 0 96-43 96-96s-43-96-96-96L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-32 0c-17.7 0-32 14.3-32 32zM128 512l32 0c53 0 96-43 96-96s-43-96-96-96L32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32l128 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32z" />
+                            </svg>
+                            <div class="md:pl-4 wind text:xl md:text-4xl  md:border-l-4 border-white"></div>
+                        </div>
+                        <div class="flex p-2 flex-row items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="pr-2 w-8 md:pr-4 md:w-12" height="64"
+                                width="40" viewBox="0 0 512 512">
+                                <path fill="#ffffff"
+                                    d="M88 0C74.7 0 64 10.7 64 24c0 38.9 23.4 59.4 39.1 73.1l1.1 1C120.5 112.3 128 119.9 128 136c0 13.3 10.7 24 24 24s24-10.7 24-24c0-38.9-23.4-59.4-39.1-73.1l-1.1-1C119.5 47.7 112 40.1 112 24c0-13.3-10.7-24-24-24zM32 192c-17.7 0-32 14.3-32 32L0 416c0 53 43 96 96 96l192 0c53 0 96-43 96-96l16 0c61.9 0 112-50.1 112-112s-50.1-112-112-112l-48 0L32 192zm352 64l16 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0 0-96zM224 24c0-13.3-10.7-24-24-24s-24 10.7-24 24c0 38.9 23.4 59.4 39.1 73.1l1.1 1C232.5 112.3 240 119.9 240 136c0 13.3 10.7 24 24 24s24-10.7 24-24c0-38.9-23.4-59.4-39.1-73.1l-1.1-1C231.5 47.7 224 40.1 224 24z" />
+                            </svg>
+                            <div class="md:pl-4 humidity text:xl md:text-4xl md:border-l-4 border-white"></div>
+                        </div>
                     </div>
-                    <div class="weatherIcon"></div>
-
+                    <div class="location text-center font-semibold text-3xl md:text-6xl w-full"></div>
                 </div>
             </section>
 
@@ -56,6 +93,7 @@
         </section>
 
     </main>
+
 
 
     <script src="./script.js"></script>

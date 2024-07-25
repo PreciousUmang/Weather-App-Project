@@ -12,6 +12,10 @@ module.exports = {
       backgroundImage: {
         "custom-bg": "url('../images/bgImage.jpg')",
       },
+      fontFamily: {
+        quickSand: ['"Quicksand"', "sans-serif"],
+        // Add more custom font families as needed
+      },
     },
     plugins: [],
   },
