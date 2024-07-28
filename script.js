@@ -1,16 +1,17 @@
-// API Elements
 const apiKey = "e7c1be5883c9f4a35fc0943f88b03ae1";
 const apiURL = `https://api.openweathermap.org/data/2.5/weather?q=`;
 const forecastApiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=`;
-
-// BUTTON
 const searchBtn = document.querySelector(".searchBtn");
+const currentBtn = document.querySelector("#currentLocation");
 
 async function getWeather() {
-  const city = document.querySelector(`#searchBox`).value;
-  // const city = `Hardoi`;
+  const city = document.querySelector("#searchBox").value.trim();
+  if (!city) {
+    alert("Please enter a city name");
+    return;
+  }
+
   try {
-    // CURRENT WEATHER FETCH
     const currentWeatherResponse = await fetch(
       apiURL + city + `&units=metric&appid=` + apiKey,
     );
@@ -20,7 +21,6 @@ async function getWeather() {
     }
     const currentWeatherData = await currentWeatherResponse.json();
 
-    // 5 DAYS FORECAST FETCH
     const forecastResponse = await fetch(
       forecastApiUrl + city + `&units=metric&appid=` + apiKey,
     );
@@ -32,6 +32,8 @@ async function getWeather() {
 
     updateCurrentWeather(currentWeatherData);
     updateForecast(forecastData);
+    saveRecentSearch(city); // Save the search
+    showRecentSearches(); // Show updated recent searches
   } catch (error) {
     console.error("Error:", error);
   }
@@ -42,33 +44,10 @@ function updateCurrentWeather(data) {
   const temp = data.main.temp + "°c";
   const humidity = data.main.humidity + "%";
   const wind = data.wind.speed + "km/h";
-
-  document.querySelector(".location").innerHTML =
-    `<img src="./images/cloudy.png" class="h-16 md:32 mx-auto" alt="weatherLogo">` +
-    location;
-  document.querySelector(".temperature").innerHTML =
-    `${temp}<p class="text-base">Temperature</p>`;
-  document.querySelector(".humidity").innerHTML =
-    `${humidity}<p class="text-base">Humidity</p>`;
-  document.querySelector(".wind").innerHTML =
-    `${wind}<div class="text-base"> Wind Speed</div>`;
-}
-
-searchBtn.addEventListener("click", getWeather);
-// getWeather();
-
-function displayData() {}
-function updateCurrentWeather(data) {
-  const location = data.name;
-  const temp = data.main.temp + "°c";
-  const humidity = data.main.humidity + "%";
-  const wind = data.wind.speed + "km/h";
   const icon = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-  console.log(icon);
 
   document.querySelector(".location").innerHTML =
-    `<img src="${icon}" class=" md:h-32 mx-auto" alt="weatherLogo">` + location;
-
+    `<img src="${icon}" class="md:h-32 mx-auto" alt="weatherLogo">` + location;
   document.querySelector(".temperature").innerHTML =
     `${temp}<p class="text-base">Temperature</p>`;
   document.querySelector(".humidity").innerHTML =
@@ -77,14 +56,13 @@ function updateCurrentWeather(data) {
     `${wind}<div class="text-base"> Wind Speed</div>`;
 }
 
+// UPDATE FORECAST DATA IN HTML
 function updateForecast(data) {
   const forecastContainer = document.querySelector(".forecast");
-  // CLEARING CONTAINER FOR NEW SEARCH
   forecastContainer.innerHTML = "";
 
   data.list.forEach((item, index) => {
     if (index % 8 === 0) {
-      // SHOW DAILY FORECAST
       const forecastDate = new Date(item.dt * 1000);
       const day = forecastDate.toLocaleDateString("en-US", { weekday: "long" });
       const temp = item.main.temp + "°c";
@@ -92,15 +70,123 @@ function updateForecast(data) {
       const icon = `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`;
 
       forecastContainer.innerHTML += `
-              <div class="forecast-item flex flex-col items-center p-2 gap-4md:px-10 hover:scale-90 transition-all duration-300 bg-black bg-opacity-20 rounded-lg m-2">
-                  <h4 class="text-xl font-bold">${day}</h4>
-                  <img src="${icon}" alt="${description}" class="h-12 w-12">
-                  <p class="text-lg">${temp}</p>
-                  <p class="text-sm">${description}</p>
-              </div>
-          `;
+        <div class="forecast-item flex flex-col items-center p-2 gap-4 md:px-10 hover:scale-90 transition-all duration-300 bg-black bg-opacity-20 rounded-lg m-2">
+            <h4 class="text-xl font-bold">${day}</h4>
+            <img src="${icon}" alt="${description}" class="h-12 w-12">
+            <p class="text-lg">${temp}</p>
+            <p class="text-sm">${description}</p>
+        </div>
+      `;
     }
   });
 }
 
+function saveRecentSearch(city) {
+  let recentSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
+  console.log("Current recent searches:", recentSearches); // Debugging log
+
+  if (!recentSearches.includes(city)) {
+    recentSearches.push(city);
+    if (recentSearches.length > 5) {
+      recentSearches.shift();
+    }
+    localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
+    console.log("Updated recent searches:", recentSearches); // Debugging log
+  }
+}
+
+function showRecentSearches() {
+  const dropdown = document.getElementById("dropdown");
+  const recentSearches =
+    JSON.parse(localStorage.getItem("recentSearches")) || [];
+  dropdown.innerHTML = "";
+  if (recentSearches.length > 0) {
+    recentSearches.forEach((city, index) => {
+      const item = document.createElement("a");
+      item.textContent = city;
+      item.href = "#";
+      item.className = "block px-4 py-2 text-sm text-gray-700";
+      item.role = "menuitem";
+      item.tabIndex = "-1";
+      item.id = `menu-item-${index}`;
+      item.onclick = () => {
+        document.querySelector("#searchBox").value = city;
+        dropdownMenu.classList.add("hidden");
+      };
+      dropdown.appendChild(item);
+    });
+    dropdownMenu.classList.remove("hidden");
+  } else {
+    dropdownMenu.classList.add("hidden");
+  }
+}
+
+function toggleDropdown() {
+  const dropdownMenu = document.getElementById("dropdown-menu");
+  dropdownMenu.classList.toggle("hidden");
+}
+
+document.addEventListener("click", (event) => {
+  const dropdownMenu = document.getElementById("dropdown-menu");
+  if (
+    !dropdownMenu.contains(event.target) &&
+    event.target.id !== "menu-button"
+  ) {
+    dropdownMenu.classList.add("hidden");
+  }
+});
+
 searchBtn.addEventListener("click", getWeather);
+document
+  .querySelector("#searchBox")
+  .addEventListener("focus", showRecentSearches);
+
+async function getCurrentLocationWeather() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+      try {
+        const currentWeatherResponse = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`,
+        );
+        const currentWeatherData = await currentWeatherResponse.json();
+        const city = currentWeatherData.name;
+
+        const forecastResponse = await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`,
+        );
+        const forecastData = await forecastResponse.json();
+
+        updateCurrentWeather(currentWeatherData);
+        updateForecast(forecastData);
+        saveRecentSearch(city);
+        showRecentSearches();
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    });
+  } else {
+    alert("Geolocation is not supported by this browser.");
+  }
+}
+
+document.addEventListener("click", (event) => {
+  const dropdownMenu = document.getElementById("dropdown-menu");
+  if (
+    !dropdownMenu.contains(event.target) &&
+    event.target.id !== "menu-button"
+  ) {
+    dropdownMenu.classList.add("hidden");
+  }
+});
+
+searchBtn.addEventListener("click", () => {
+  const city = document.querySelector("#searchBox").value.trim();
+  getWeather(city);
+});
+currentBtn.addEventListener("click", getCurrentLocationWeather);
+document
+  .querySelector("#searchBox")
+  .addEventListener("focus", showRecentSearches);
+
+// NOTE : I HAVE TAKEN HELP FROM AI IN CODE OPTIMIZATON AND LOCAL STORAGE SAVING PART.
