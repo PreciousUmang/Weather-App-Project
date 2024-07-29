@@ -5,7 +5,7 @@ const searchBtn = document.querySelector(".searchBtn");
 const currentBtn = document.querySelector("#currentLocation");
 
 async function getWeather(city) {
-  if (!city || (!latitude && !longitude)) {
+  if (!city) {
     alert("Please enter a city name");
     return;
   }
