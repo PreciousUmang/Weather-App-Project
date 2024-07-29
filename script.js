@@ -181,3 +181,4 @@ async function getCurrentLocationWeather() {
 }
 
 currentBtn.addEventListener("click", getCurrentLocationWeather);
+document.addEventListener("DOMContentLoaded", showRecentSearches);
