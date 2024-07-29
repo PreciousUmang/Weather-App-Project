@@ -4,9 +4,8 @@ const forecastApiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=`;
 const searchBtn = document.querySelector(".searchBtn");
 const currentBtn = document.querySelector("#currentLocation");
 
-async function getWeather() {
-  const city = document.querySelector("#searchBox").value.trim();
-  if (!city) {
+async function getWeather(city) {
+  if (!city || (!latitude && !longitude)) {
     alert("Please enter a city name");
     return;
   }
@@ -32,8 +31,8 @@ async function getWeather() {
 
     updateCurrentWeather(currentWeatherData);
     updateForecast(forecastData);
-    saveRecentSearch(city); // Save the search
-    showRecentSearches(); // Show updated recent searches
+    saveRecentSearch(city);
+    showRecentSearches();
   } catch (error) {
     console.error("Error:", error);
   }
@@ -56,7 +55,6 @@ function updateCurrentWeather(data) {
     `${wind}<div class="text-base"> Wind Speed</div>`;
 }
 
-// UPDATE FORECAST DATA IN HTML
 function updateForecast(data) {
   const forecastContainer = document.querySelector(".forecast");
   forecastContainer.innerHTML = "";
@@ -83,15 +81,12 @@ function updateForecast(data) {
 
 function saveRecentSearch(city) {
   let recentSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
-  console.log("Current recent searches:", recentSearches); // Debugging log
-
   if (!recentSearches.includes(city)) {
     recentSearches.push(city);
     if (recentSearches.length > 5) {
       recentSearches.shift();
     }
     localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
-    console.log("Updated recent searches:", recentSearches); // Debugging log
   }
 }
 
@@ -111,6 +106,7 @@ function showRecentSearches() {
       item.id = `menu-item-${index}`;
       item.onclick = () => {
         document.querySelector("#searchBox").value = city;
+        getWeather(city);
         dropdownMenu.classList.add("hidden");
       };
       dropdown.appendChild(item);
@@ -136,57 +132,52 @@ document.addEventListener("click", (event) => {
   }
 });
 
-searchBtn.addEventListener("click", getWeather);
-document
-  .querySelector("#searchBox")
-  .addEventListener("focus", showRecentSearches);
+searchBtn.addEventListener("click", () => {
+  const city = document.querySelector("#searchBox").value.trim();
+  getWeather(city);
+});
 
 async function getCurrentLocationWeather() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const { latitude, longitude } = position.coords;
-      try {
-        const currentWeatherResponse = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`,
-        );
-        const currentWeatherData = await currentWeatherResponse.json();
-        const city = currentWeatherData.name;
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const currentWeatherResponse = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`,
+          );
+          if (!currentWeatherResponse.ok) {
+            alert("Error fetching weather data for current location");
+            return;
+          }
+          const currentWeatherData = await currentWeatherResponse.json();
+          const city = currentWeatherData.name;
 
-        const forecastResponse = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`,
-        );
-        const forecastData = await forecastResponse.json();
+          const forecastResponse = await fetch(
+            `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`,
+          );
+          if (!forecastResponse.ok) {
+            alert("Error fetching forecast data");
+            return;
+          }
+          const forecastData = await forecastResponse.json();
 
-        updateCurrentWeather(currentWeatherData);
-        updateForecast(forecastData);
-        saveRecentSearch(city);
-        showRecentSearches();
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    });
+          updateCurrentWeather(currentWeatherData);
+          updateForecast(forecastData);
+          saveRecentSearch(city);
+          showRecentSearches();
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      },
+      (error) => {
+        alert("Unable to retrieve your location");
+        console.error("Geolocation error:", error);
+      },
+    );
   } else {
     alert("Geolocation is not supported by this browser.");
   }
 }
 
-document.addEventListener("click", (event) => {
-  const dropdownMenu = document.getElementById("dropdown-menu");
-  if (
-    !dropdownMenu.contains(event.target) &&
-    event.target.id !== "menu-button"
-  ) {
-    dropdownMenu.classList.add("hidden");
-  }
-});
-
-searchBtn.addEventListener("click", () => {
-  const city = document.querySelector("#searchBox").value.trim();
-  getWeather(city);
-});
 currentBtn.addEventListener("click", getCurrentLocationWeather);
-document
-  .querySelector("#searchBox")
-  .addEventListener("focus", showRecentSearches);
-
-// NOTE : I HAVE TAKEN HELP FROM AI IN CODE OPTIMIZATON AND LOCAL STORAGE SAVING PART.

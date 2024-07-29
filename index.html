@@ -29,13 +29,13 @@
 
 <body class="box-border bg-custom-bg text-white font-quickSand">
     <header class="bg-custom-bg">
-        <h1 class="text-center font-bold text-xl p-4 md:text-4xl md:p-16 bg-opacity-20 bg-black mb-2 rounded-b-2xl">
+        <h1 class="text-center font-bold text-xl p-4 md:text-4xl md:p-16 bg-opacity-30 bg-black mb-2 rounded-b-2xl">
             Weather Forecast Application</h1>
     </header>
     <main>
         <section class="flex flex-col md:flex-row flex-wrap">
             <section
-                class="searchArea flex flex-col md:m-2 space-y-4 font-semibold md:text-lg w-full md:w-2/6 bg-black bg-opacity-20 rounded-2xl p-4">
+                class="searchArea flex flex-col md:m-2 space-y-4 font-semibold md:text-lg w-full md:w-2/6 bg-black bg-opacity-30 rounded-2xl p-4">
                 <h2 class="text-center md:text-start">Enter a City Name</h2>
                 <input type="text" id="searchBox" class="p-4 text-gray-700 rounded-lg"
                     placeholder="Example: Lucknow, Delhi, Agra" onfocus="showRecentSearches()" required>
@@ -82,7 +82,7 @@
             </section>
 
             <section
-                class="overview flex-1 p-2 md:w-3/5 transition-all duration-300 my-2 w-full md:m-2 rounded-2xl bg-black bg-opacity-20">
+                class="overview flex-1 p-2 md:w-3/5 transition-all duration-300 my-2 w-full md:m-2 rounded-2xl bg-black bg-opacity-30">
                 <h3 class="text-2xl text-white text-center md:text-4xl font-semibold">Overview
                 </h3>
                 <div class="flex flex-row p-2  justify-center items-center">
@@ -112,12 +112,12 @@
                             <div class="md:pl-4 humidity text:xl md:text-4xl md:border-l-4 border-white"> __</div>
                         </div>
                     </div>
-                    <div class="location text-center font-semibold text-3xl md:text-6xl w-full"></div>
+                    <div class="location text-center font-semibold text-3xl md:text-4xl lg:6xl w-full"></div>
                 </div>
             </section>
     </main>
 
-    <section class="forecastSection bg-black  bg-opacity-10 rounded-2xl p-4">
+    <section class="forecastSection bg-black  bg-opacity-30 m-2 rounded-2xl p-4">
         <h3 class="text-2xl text-white font-semibold p-2">5 Days Weather Forecast</h3>
         <div class="forecast flex flex-col md:flex-row md:flex-wrap justify-center">
         </div>
