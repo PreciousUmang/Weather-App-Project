@@ -4,6 +4,18 @@ const forecastApiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=`;
 const searchBtn = document.querySelector(".searchBtn");
 const currentBtn = document.querySelector("#currentLocation");
 
+document.addEventListener("DOMContentLoaded", () => {
+  populateRecentSearches();
+});
+
+async function fetchWeatherData(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json();
+}
+
 async function getWeather(city) {
   if (!city) {
     alert("Please enter a city name");
@@ -11,29 +23,19 @@ async function getWeather(city) {
   }
 
   try {
-    const currentWeatherResponse = await fetch(
-      apiURL + city + `&units=metric&appid=` + apiKey,
+    const currentWeatherData = await fetchWeatherData(
+      apiURL + city + `&units=metric&appid=` + apiKey
     );
-    if (!currentWeatherResponse.ok) {
-      alert("Please enter a correct City Name");
-      return;
-    }
-    const currentWeatherData = await currentWeatherResponse.json();
-
-    const forecastResponse = await fetch(
-      forecastApiUrl + city + `&units=metric&appid=` + apiKey,
+    const forecastData = await fetchWeatherData(
+      forecastApiUrl + city + `&units=metric&appid=` + apiKey
     );
-    if (!forecastResponse.ok) {
-      alert("Error fetching forecast data");
-      return;
-    }
-    const forecastData = await forecastResponse.json();
 
     updateCurrentWeather(currentWeatherData);
     updateForecast(forecastData);
     saveRecentSearch(city);
-    showRecentSearches();
+    populateRecentSearches();
   } catch (error) {
+    alert("Error fetching weather data: " + error.message);
     console.error("Error:", error);
   }
 }
@@ -90,10 +92,9 @@ function saveRecentSearch(city) {
   }
 }
 
-function showRecentSearches() {
+function populateRecentSearches() {
   const dropdown = document.getElementById("dropdown");
-  const recentSearches =
-    JSON.parse(localStorage.getItem("recentSearches")) || [];
+  const recentSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
   dropdown.innerHTML = "";
   if (recentSearches.length > 0) {
     recentSearches.forEach((city, index) => {
@@ -104,16 +105,14 @@ function showRecentSearches() {
       item.role = "menuitem";
       item.tabIndex = "-1";
       item.id = `menu-item-${index}`;
-      item.onclick = () => {
+      item.onclick = (event) => {
+        event.preventDefault();
         document.querySelector("#searchBox").value = city;
         getWeather(city);
-        dropdownMenu.classList.add("hidden");
+        document.getElementById("dropdown-menu").classList.add("hidden");
       };
       dropdown.appendChild(item);
     });
-    dropdownMenu.classList.remove("hidden");
-  } else {
-    dropdownMenu.classList.add("hidden");
   }
 }
 
@@ -143,37 +142,27 @@ async function getCurrentLocationWeather() {
       async (position) => {
         const { latitude, longitude } = position.coords;
         try {
-          const currentWeatherResponse = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`,
+          const currentWeatherData = await fetchWeatherData(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`
           );
-          if (!currentWeatherResponse.ok) {
-            alert("Error fetching weather data for current location");
-            return;
-          }
-          const currentWeatherData = await currentWeatherResponse.json();
+          const forecastData = await fetchWeatherData(
+            `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`
+          );
           const city = currentWeatherData.name;
-
-          const forecastResponse = await fetch(
-            `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`,
-          );
-          if (!forecastResponse.ok) {
-            alert("Error fetching forecast data");
-            return;
-          }
-          const forecastData = await forecastResponse.json();
 
           updateCurrentWeather(currentWeatherData);
           updateForecast(forecastData);
           saveRecentSearch(city);
-          showRecentSearches();
+          populateRecentSearches();
         } catch (error) {
+          alert("Error fetching weather data: " + error.message);
           console.error("Error:", error);
         }
       },
       (error) => {
         alert("Unable to retrieve your location");
         console.error("Geolocation error:", error);
-      },
+      }
     );
   } else {
     alert("Geolocation is not supported by this browser.");
@@ -181,4 +170,3 @@ async function getCurrentLocationWeather() {
 }
 
 currentBtn.addEventListener("click", getCurrentLocationWeather);
-document.addEventListener("DOMContentLoaded", showRecentSearches);
